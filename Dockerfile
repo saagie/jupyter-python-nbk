@@ -82,6 +82,9 @@ USER root
 RUN mkdir /notebooks-dir && chown 1000:100 /notebooks-dir
 USER $NB_USER
 
+# Fix kernel config
+RUN python2 -m ipykernel install --user
+
 # Define default workdir
 WORKDIR /notebooks-dir
 
