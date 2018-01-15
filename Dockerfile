@@ -89,4 +89,4 @@ RUN python2 -m ipykernel install --user
 WORKDIR /notebooks-dir
 
 # Default: run without authentication
-CMD ["start-notebook.sh", "--NotebookApp.token=''"]
+CMD ["start-notebook.sh", "--NotebookApp.token=''", "--NotebookApp.password=''"]
