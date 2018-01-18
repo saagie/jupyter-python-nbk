@@ -23,20 +23,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends python-numpy \
 
 # Install python2 libraries
 RUN pip2 --no-cache-dir install \
+    beautifulsoup4==4.5.3 \
     bokeh==0.12.13 \
+    dask==0.16.0 \
     fiona==1.7.11 \
     folium==0.4.0 \
-    hdfs[avro,dataframe,kerberos] \
+    fastavro==0.17.1 \
+    h5py==2.7.1 \
+    hdfs==2.0.16 \
     ibis-framework==0.12.0 \
     impyla==0.14.0 \
     ipywidgets==7.0.5 \
     matplotlib==2.1.1 \
     mpld3==0.3 \
+    numba==0.31.0 \
+    numpy==1.14.0 \
     networkx==2.0 \
     pandas==0.21.1 \
+    Pillow==5.0.0 \
     pybrain==0.3 \
     pymongo==3.2.2 \
     pyodbc==4.0.21 \
+    requests-kerberos==0.12.0 \
     sasl==0.2.1 \
     scikit-image==0.13.1 \
     scikit-learn==0.19.1 \
@@ -45,7 +53,9 @@ RUN pip2 --no-cache-dir install \
     shapely==1.6.3 \
     SQLAlchemy==1.1.13 \
     statsmodels==0.8.0 \
-    thrift_sasl==0.3.0 && \
+    thrift_sasl==0.3.0 \
+    vega==0.4.4 \
+    vincent==0.4.4 && \
     rm -rf /root/.cachex
 
 USER $NB_USER
@@ -55,12 +65,15 @@ RUN conda install --quiet --yes \
     'fiona=1.7.11' \
     'folium=0.4.0' \
     'hdf5=1.10.1' \
+    'python-hdfs=2.0.16' \
     'ibis-framework=0.12.0' \
     'impyla=0.14.0' \
     'matplotlib=2.1.1' \
     'mpld3=0.3' \
     'networkx=2.0' \
+    'numpy=1.13.3' \
     'pandas=0.21.1' \
+    'pillow=4.3.0' \
     'pymongo=3.2.2' \
     'pyodbc=4.0.21' \
     'sasl=0.2.1' \
