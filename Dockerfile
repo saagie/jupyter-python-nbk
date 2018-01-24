@@ -103,5 +103,10 @@ RUN python2 -m ipykernel install --user
 # Define default workdir
 WORKDIR /notebooks-dir
 
+# Install Saagie plugin
+USER root
+RUN pip --no-cache-dir install jupyter-saagie-plugin==1.0.2
+USER $NB_USER
+
 # Default: run without authentication
 CMD ["start-notebook.sh", "--NotebookApp.token=''", "--NotebookApp.password=''"]
