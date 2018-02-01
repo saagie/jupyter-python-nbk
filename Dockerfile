@@ -53,7 +53,7 @@ RUN pip2 --no-cache-dir install \
     shapely==1.6.3 \
     SQLAlchemy==1.1.13 \
     statsmodels==0.8.0 \
-    thrift_sasl==0.3.0 \
+    thrift_sasl==0.2.1 \
     vega==0.4.4 \
     vincent==0.4.4 && \
     rm -rf /root/.cachex
@@ -83,7 +83,7 @@ RUN conda install --quiet --yes \
     'shapely=1.6.3' \
     'seaborn=0.8.1' \
     'SQLAlchemy=1.1.13' \
-    'thrift_sasl=0.3.0' && \
+    'thrift_sasl=0.2.1' && \
     conda remove --quiet --yes --force qt pyqt && \
     conda clean -tipsy && \
     npm cache clean && \
