@@ -90,9 +90,11 @@ RUN conda install --quiet --yes \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
     fix-permissions $CONDA_DIR
 
-# Create default workdir (useful if no volume mounted)
 USER root
+# Create default workdir (useful if no volume mounted)
 RUN mkdir /notebooks-dir && chown 1000:100 /notebooks-dir
+# Add permission on /usr/local/lib/python2.7/ to allow Jovyan to 'pip2 install'
+RUN chown -R $NB_USER:users /usr/local/lib/python2.7/
 USER $NB_USER
 
 # Fix kernel config
