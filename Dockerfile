@@ -14,8 +14,8 @@ RUN cd /tmp && wget https://bootstrap.pypa.io/get-pip.py && \
     python2 get-pip.py
 
 # Install libraries dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends python-numpy \
-    python3-numpy libpng3 libfreetype6-dev libatlas-base-dev gfortran \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpng3 libfreetype6-dev libatlas-base-dev gfortran \
     libgdal1-dev libjpeg-dev sasl2-bin libsasl2-2 libsasl2-dev \
     libsasl2-modules unixodbc-dev python3-tk && \
     apt-get clean && \
@@ -25,10 +25,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends python-numpy \
 RUN pip2 --no-cache-dir install \
     beautifulsoup4==4.5.3 \
     bokeh==0.12.13 \
+    Cython==0.27.3 \
     dask==0.16.0 \
     fiona==1.7.11 \
     folium==0.4.0 \
-    fastavro==0.17.1 \
+    fastavro==0.17.7 \
     h5py==2.7.1 \
     hdfs==2.0.16 \
     ibis-framework==0.12.0 \
@@ -102,6 +103,11 @@ RUN python2 -m ipykernel install --user
 
 # Define default workdir
 WORKDIR /notebooks-dir
+
+# Install Saagie plugin
+USER root
+RUN pip --no-cache-dir install jupyter-saagie-plugin==1.0.5
+USER $NB_USER
 
 # Default: run without authentication
 CMD ["start-notebook.sh", "--NotebookApp.token=''", "--NotebookApp.password=''"]
