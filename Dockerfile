@@ -106,7 +106,7 @@ WORKDIR /notebooks-dir
 
 # Install Saagie plugin
 USER root
-RUN pip --no-cache-dir install jupyter-saagie-plugin==1.0.4
+RUN pip --no-cache-dir install jupyter-saagie-plugin==1.0.5
 USER $NB_USER
 
 # Default: run without authentication
