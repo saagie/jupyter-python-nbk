@@ -138,7 +138,8 @@ RUN pip3 --no-cache-dir install \
 	tokenizer==1.0.3 \
 	apiclient==1.0.3 \
 	crypto==1.4.1 \
-	addok==1.0.2 && \
+	addok==1.0.2 \
+	neo4j-driver==1.6.0 && \
     rm -rf /root/.cachex
 
 RUN pip2 --no-cache-dir install \
@@ -169,7 +170,8 @@ RUN pip2 --no-cache-dir install \
 	Cython==0.28.3 \
 	numba==0.38 \
 	fastparquet==0.1.5 \
-	addok==1.0.2 && \
+	addok==1.0.2 \
+	neo4j-driver==1.6.0 &&\
     rm -rf /root/.cachex
 
 ##### END PM 128 ####
