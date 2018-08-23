@@ -139,6 +139,7 @@ RUN pip3 --no-cache-dir install \
 	apiclient==1.0.3 \
 	crypto==1.4.1 \
 	addok==1.0.2 \
+    protobuf==3.6.1 \
 	neo4j-driver==1.6.0 && \
     rm -rf /root/.cachex
 
@@ -171,6 +172,7 @@ RUN pip2 --no-cache-dir install \
 	numba==0.38 \
 	fastparquet==0.1.5 \
 	addok==1.0.2 \
+    protobuf==3.6.1 \
 	neo4j-driver==1.6.0 &&\
     rm -rf /root/.cachex
 
