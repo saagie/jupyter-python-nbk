@@ -193,8 +193,8 @@ RUN python2 -m ipykernel install --user
 WORKDIR /notebooks-dir
 
 # Install Saagie plugin
-USER root
-RUN pip --no-cache-dir install jupyter-saagie-plugin==1.0.6
+# USER root
+# RUN pip --no-cache-dir install jupyter-saagie-plugin==1.0.6
 
 USER $NB_USER
 
