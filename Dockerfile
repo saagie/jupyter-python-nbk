@@ -140,7 +140,8 @@ RUN pip3 --no-cache-dir install \
 	crypto==1.4.1 \
 	addok==1.0.2 \
     protobuf==3.6.1 \
-	neo4j-driver==1.6.0 && \
+	neo4j-driver==1.6.0 \
+	mysql-connector==2.1.4 && \
     rm -rf /root/.cachex
 
 RUN pip2 --no-cache-dir install \
@@ -173,7 +174,8 @@ RUN pip2 --no-cache-dir install \
 	fastparquet==0.1.5 \
 	addok==1.0.2 \
     protobuf==3.6.1 \
-	neo4j-driver==1.6.0 &&\
+	neo4j-driver==1.6.0 \
+	mysql-connector==2.1.4 &&\
     rm -rf /root/.cachex
 
 ##### END PM 128 ####
@@ -191,8 +193,8 @@ RUN python2 -m ipykernel install --user
 WORKDIR /notebooks-dir
 
 # Install Saagie plugin
-USER root
-RUN pip --no-cache-dir install jupyter-saagie-plugin==1.0.6
+# USER root
+# RUN pip --no-cache-dir install jupyter-saagie-plugin==1.0.6
 
 USER $NB_USER
 
