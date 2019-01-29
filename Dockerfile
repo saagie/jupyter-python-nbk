@@ -194,7 +194,7 @@ WORKDIR /notebooks-dir
 
 # Install Saagie plugin
 USER root
-RUN pip --no-cache-dir install ipython==7.2.0 && rm -rf /root/.cachex
+RUN pip --no-cache-dir install ipython==7.1.0 && rm -rf /root/.cachex
 RUN pip --no-cache-dir install jupyter-saagie-plugin==1.0.6
 
 USER $NB_USER
