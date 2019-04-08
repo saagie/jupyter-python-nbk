@@ -197,6 +197,11 @@ USER root
 RUN pip --no-cache-dir install ipython==7.1.0 && rm -rf /root/.cachex
 RUN pip --no-cache-dir install jupyter-saagie-plugin==1.0.6
 
+##### BEGIN SRT-426 ####
+RUN apt-get update && \
+    apt-get install -y freeipa-client
+##### END SRT-426 ####
+
 USER $NB_USER
 
 # Default: run without authentication
