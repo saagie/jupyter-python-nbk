@@ -242,8 +242,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 
-RUN pip3 install torch torchvision \
-				tensorflow-gpu &&\
+RUN pip3 install torch==1.2.0 torchvision==0.4.0 \
+				tensorflow-gpu==1.14.0 &&\
 				rm -rf /root/.cachex
 
 USER $NB_USER
