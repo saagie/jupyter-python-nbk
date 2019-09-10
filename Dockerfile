@@ -105,8 +105,6 @@ RUN conda install --quiet --yes \
 	'django=2.0.5' \
 	'Jellyfish=0.6.1' \
 	'Openpyxl=2.5.3' \
-	'tensorflow=1.8.0' \
-	'keras=2.1.5' \
 	'scrapy=1.5.0' \
 	'simplejson=3.15.0' \
 	'pycurl=7.43.0.1' \
