@@ -37,7 +37,7 @@ RUN pip2 --no-cache-dir install \
     ipywidgets==7.0.5 \
     matplotlib==2.1.1 \
     mpld3==0.3 \
-    numba==0.31.0 \
+    numba==0.38.0 \
     numpy==1.14.0 \
     networkx==2.0 \
     pandas==0.21.1 \
@@ -141,7 +141,7 @@ RUN pip3 --no-cache-dir install \
 	addok==1.0.2 \
     protobuf==3.6.1 \
 	neo4j-driver==1.6.0 \
-	mysql-connector==2.1.4 && \
+	mysql-connector==2.1.7 && \
     rm -rf /root/.cachex
 
 RUN pip2 --no-cache-dir install \
@@ -163,8 +163,6 @@ RUN pip2 --no-cache-dir install \
     textract==1.6.1 \
     tika==1.16 \
 	scrapy==1.5.0 \
-	tensorflow==1.8.0 \
-	keras==2.1.6 \
 	django==1.11.13 \
 	gensim==3.4.0 \
 	spacy==2.0.11 \
@@ -175,7 +173,7 @@ RUN pip2 --no-cache-dir install \
 	addok==1.0.2 \
     protobuf==3.6.1 \
 	neo4j-driver==1.6.0 \
-	mysql-connector==2.1.4 &&\
+	mysql-connector==2.1.7 &&\
     rm -rf /root/.cachex
 
 ##### END PM 128 ####
@@ -196,6 +194,57 @@ WORKDIR /notebooks-dir
 USER root
 RUN pip --no-cache-dir install ipython==7.1.0 && rm -rf /root/.cachex
 RUN pip --no-cache-dir install jupyter-saagie-plugin==1.0.6
+
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates apt-transport-https gnupg-curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    NVIDIA_GPGKEY_SUM=d1be581509378368edeec8c1eb2958702feedf3bc3d17011adbf24efacce4ab5 && \
+    NVIDIA_GPGKEY_FPR=ae09fe4bbd223a84b2ccfce3f60f4b3d7fa2af80 && \
+    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub && \
+    apt-key adv --export --no-emit-version -a $NVIDIA_GPGKEY_FPR | tail -n +5 > cudasign.pub && \
+    echo "$NVIDIA_GPGKEY_SUM  cudasign.pub" | sha256sum -c --strict - && rm cudasign.pub && \
+    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64 /" > /etc/apt/sources.list.d/cuda.list && \
+    echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list
+
+ENV CUDA_VERSION 9.2.148
+
+ENV CUDA_PKG_VERSION 9-2=$CUDA_VERSION-1
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        cuda-cudart-$CUDA_PKG_VERSION && \
+    ln -s cuda-9.2 /usr/local/cuda && \
+    rm -rf /var/lib/apt/lists/*
+
+# nvidia-docker 1.0
+LABEL com.nvidia.volumes.needed="nvidia_driver"
+LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
+
+RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
+    echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
+
+ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+
+# nvidia-container-runtime
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+ENV NVIDIA_REQUIRE_CUDA "cuda>=9.2"
+
+ENV NCCL_VERSION 2.4.2
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        cuda-libraries-$CUDA_PKG_VERSION \
+        cuda-nvtx-$CUDA_PKG_VERSION \
+        libnccl2=$NCCL_VERSION-1+cuda9.2 && \
+    apt-mark hold libnccl2 && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV CUDNN_VERSION 7.6.0.64
+LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+            libcudnn7=$CUDNN_VERSION-1+cuda9.2 && \
+    apt-mark hold libcudnn7 && \
+    rm -rf /var/lib/apt/lists/*
+
 
 USER $NB_USER
 
