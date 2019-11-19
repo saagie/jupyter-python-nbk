@@ -55,6 +55,7 @@ RUN pip2 --no-cache-dir install \
     shapely==1.6.3 \
     SQLAlchemy==1.1.13 \
     statsmodels==0.8.0 \
+    thrift==0.9.3 \
     thrift_sasl==0.2.1 \
     vega==0.4.4 \
     vincent==0.4.4 && \
