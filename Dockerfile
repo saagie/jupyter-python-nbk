@@ -32,6 +32,7 @@ RUN pip2 --no-cache-dir install \
     fastavro==0.17.7 \
     h5py==2.7.1 \
     hdfs==2.0.16 \
+    hdfs[kerberos]==2.0.16 \
     ibis-framework==0.12.0 \
     impyla==0.14.0 \
     ipywidgets==7.0.5 \
