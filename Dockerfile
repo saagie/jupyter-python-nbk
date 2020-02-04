@@ -2,24 +2,27 @@ FROM jupyter/scipy-notebook:c7fb6660d096
 
 MAINTAINER Saagie
 
+USER $NB_USER
 # Add python 2 kernel
 RUN conda create -n ipykernel_py2 python=2 ipykernel --yes
 RUN /bin/bash -c "source activate ipykernel_py2"
 RUN python -m ipykernel install --user
 
 USER root
-
 # Install pip2
 RUN cd /tmp && wget https://bootstrap.pypa.io/get-pip.py && \
     python2 get-pip.py
 
 # Install libraries dependencies
+## For Debian we'll have to replace :
+##   libpng3 => libpng-dev
+##   libgdal1-dev => libgdal-dev
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpng3 libfreetype6-dev libatlas-base-dev gfortran \
-    libgdal1-dev libjpeg-dev sasl2-bin libsasl2-2 libsasl2-dev \
-    libsasl2-modules unixodbc-dev python3-tk && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+      libpng3 libfreetype6-dev libatlas-base-dev gfortran \
+      libgdal1-dev libjpeg-dev sasl2-bin libsasl2-2 libsasl2-dev \
+      libsasl2-modules unixodbc-dev python3-tk \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install python2 libraries
 RUN pip2 --no-cache-dir install \
@@ -56,12 +59,21 @@ RUN pip2 --no-cache-dir install \
     statsmodels==0.8.0 \
     thrift_sasl==0.2.1 \
     vega==0.4.4 \
-    vincent==0.4.4 && \
-    rm -rf /root/.cachex
+    vincent==0.4.4 \
+  && rm -rf /root/.cachex
+
+
+# Ask to update Conda but seems useless :
+# Update conda to the latest version
+# RUN conda update -n base conda
+
 
 USER $NB_USER
-
 # Add libraries and upgrade libraries installed in base image for python 3
+## need to explicitely add qt/pyqt for debian it seems.
+## RUN conda install qt pyqt
+## also add condaforge
+## RUN conda install -c conda-forge --quiet --yes \
 RUN conda install --quiet --yes \
     'fiona=1.7.11' \
     'folium=0.4.0' \
@@ -84,112 +96,123 @@ RUN conda install --quiet --yes \
     'shapely=1.6.3' \
     'seaborn=0.8.1' \
     'SQLAlchemy=1.1.13' \
-    'thrift_sasl=0.2.1' && \
-    conda remove --quiet --yes --force qt pyqt && \
-    conda clean -tipsy && \
-    npm cache clean && \
-    rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
-    fix-permissions $CONDA_DIR
+    'thrift_sasl=0.2.1' \
+    && conda remove --quiet --yes --force qt pyqt \
+    # clean tispy deprecated, s not documented...
+    #&& conda clean -tipsy \
+    && conda clean --all -y \
+    && npm cache clean --force \
+    && rm -rf $CONDA_DIR/share/jupyter/lab/staging
 
 
 ##### PM 128 ####
 
 RUN conda install --quiet --yes \
-	'lxml=4.2.1' \
-	'tabula-py=1.1.1' \
-	'tika=1.16' \
-	'xlwt=1.3.0' \
-	'nltk=3.2.5' \
-	'python-Levenshtein=0.12.0' \
-	'joblib=0.11' \
-	'django=2.0.5' \
-	'Jellyfish=0.6.1' \
-	'Openpyxl=2.5.3' \
-	'scrapy=1.5.0' \
-	'simplejson=3.15.0' \
-	'pycurl=7.43.0.1' \
-	'elasticsearch=6.2.0' \
-	'fastparquet=0.1.5' \
-	'spacy=2.0.11' \
-	'pycrypto=2.6.1' && \
-    conda remove --quiet --yes --force qt pyqt && \
-    conda clean -tipsy && \
-    npm cache clean && \
-    rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
-    fix-permissions $CONDA_DIR
+      'lxml=4.2.1' \
+      'tabula-py=1.1.1' \
+      'tika=1.16' \
+      'xlwt=1.3.0' \
+      'nltk=3.2.5' \
+      'python-Levenshtein=0.12.0' \
+      'joblib=0.11' \
+      'django=2.0.5' \
+      'Jellyfish=0.6.1' \
+      'Openpyxl=2.5.3' \
+      'scrapy=1.5.0' \
+      'simplejson=3.15.0' \
+      'pycurl=7.43.0.1' \
+      'elasticsearch=6.2.0' \
+      'fastparquet=0.1.5' \
+      'spacy=2.0.11' \
+      'pycrypto=2.6.1' \
+    && conda remove --quiet --yes --force qt pyqt \
+    # clean tispy deprecated, s not documented...
+    #&& conda clean -tipsy \
+    && conda clean --all -y \
+    && npm cache clean --force \
+    && rm -rf $CONDA_DIR/share/jupyter/lab/staging
 
+
+# fix-permissions should be used as root
 USER root
+RUN fix-permissions $CONDA_DIR
+
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libxml2-dev libxslt1-dev antiword unrtf poppler-utils pstotext tesseract-ocr \
-	flac ffmpeg lame libmad0 libsox-fmt-mp3 sox libjpeg-dev swig redis-server libpulse-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+      libxml2-dev libxslt1-dev antiword unrtf poppler-utils pstotext tesseract-ocr \
+      flac ffmpeg lame libmad0 libsox-fmt-mp3 sox libjpeg-dev swig redis-server libpulse-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
+
+# Seems useless - should be better to use conda instead - to be replaced
 # Install pip3
-RUN cd /tmp && wget https://bootstrap.pypa.io/get-pip.py && \
-    python3 get-pip.py
+RUN cd /tmp \
+    && wget https://bootstrap.pypa.io/get-pip.py \
+    && python3 get-pip.py
 
+# Seems useless - should be better to use conda instead - to be replaced
 RUN pip3 --no-cache-dir install \
-	textract==1.6.1 \
-	excel==1.0.0 \
-	tokenizer==1.0.3 \
-	apiclient==1.0.3 \
-	crypto==1.4.1 \
-	addok==1.0.2 \
-    protobuf==3.6.1 \
-	neo4j-driver==1.6.0 \
-	mysql-connector==2.1.7 && \
-    rm -rf /root/.cachex
+      textract==1.6.1 \
+      excel==1.0.0 \
+      tokenizer==1.0.3 \
+      apiclient==1.0.3 \
+      crypto==1.4.1 \
+      addok==1.0.2 \
+      protobuf==3.6.1 \
+      neo4j-driver==1.6.0 \
+      mysql-connector==2.1.7 \
+    && rm -rf /root/.cachex
+
 
 RUN pip2 --no-cache-dir install \
-    lxml==4.2.1 \
-    xlwt==1.3.0 \
-    nltk==3.3 \
-    openpyxl==2.5.3 \
-    python-levenshtein==0.12.0 \
-    joblib==0.11 \
-    simplejson==3.15.0 \
-    jellyfish==0.6.1 \
-    tokenizer==1.0.3 \
-    apiclient==1.0.3 \
-    elasticsearch==6.2.0 \
-    graphviz==0.8.3 \
-    pycrypto==2.6.1 \
-    crypto==1.4.1 \
-    tabula-py==1.2.0 \
-    textract==1.6.1 \
-    tika==1.16 \
-	scrapy==1.5.0 \
-	django==1.11.13 \
-	gensim==3.4.0 \
-	spacy==2.0.11 \
-    excel==1.0.0 \
-	Cython==0.28.3 \
-	numba==0.38 \
-	fastparquet==0.1.5 \
-	addok==1.0.2 \
-    protobuf==3.6.1 \
-	neo4j-driver==1.6.0 \
-	mysql-connector==2.1.7 &&\
-    rm -rf /root/.cachex
+      lxml==4.2.1 \
+      xlwt==1.3.0 \
+      nltk==3.3 \
+      openpyxl==2.5.3 \
+      python-Levenshtein==0.12.0 \
+      joblib==0.11 \
+      simplejson==3.15.0 \
+      jellyfish==0.6.1 \
+      tokenizer==1.0.3 \
+      apiclient==1.0.3 \
+      elasticsearch==6.2.0 \
+      graphviz==0.8.3 \
+      pycrypto==2.6.1 \
+      crypto==1.4.1 \
+      tabula-py==1.2.0 \
+      textract==1.6.1 \
+      tika==1.16 \
+      scrapy==1.5.0 \
+      django==1.11.13 \
+      gensim==3.4.0 \
+      spacy==2.0.11 \
+      excel==1.0.0 \
+      Cython==0.28.3 \
+      numba==0.38 \
+      fastparquet==0.1.5 \
+      addok==1.0.2 \
+      protobuf==3.6.1 \
+      neo4j-driver==1.6.0 \
+      mysql-connector==2.1.7 \
+    && rm -rf /root/.cachex
 
-##### END PM 128 ####
+##### PM 128 END ####
+
+## TODO check if necessary
+# Fix kernel config
+RUN python2 -m ipykernel install --user
+
 
 # Create default workdir (useful if no volume mounted)
 RUN mkdir /notebooks-dir && chown 1000:100 /notebooks-dir
 # Add permission on /usr/local/lib/python2.7/ to allow Jovyan to 'pip2 install'
 RUN chown -R $NB_USER:users /usr/local/lib/python2.7/
-USER $NB_USER
-
-# Fix kernel config
-RUN python2 -m ipykernel install --user
-
 # Define default workdir
 WORKDIR /notebooks-dir
 
-USER root
 
+##### CUDA PART - should be externalized in another build #####
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates apt-transport-https gnupg-curl && \
     rm -rf /var/lib/apt/lists/* && \
     NVIDIA_GPGKEY_SUM=d1be581509378368edeec8c1eb2958702feedf3bc3d17011adbf24efacce4ab5 && \
@@ -242,7 +265,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip3 install torch==1.2.0 torchvision==0.4.0 \
 				tensorflow-gpu==1.14.0 &&\
 				rm -rf /root/.cachex
+##### CUDA PART END #####
 
+# Should run as $NB_USER
+USER $NB_USER
 
 #Add entrypoint.sh
 COPY entrypoint.sh /entrypoint.sh
