@@ -4,6 +4,9 @@ set -euxo pipefail
 NO_CACHE=""
 export DOCKER_BUILDKIT=0
 BASE_CONTAINER="jupyter/scipy-notebook:c7fb6660d096"
+PYTHON2_IMG="ypetit/test:python-2.7"
+PYTHON3_IMG="ypetit/test:python-3.6"
+
 
 while (( $# )); do
     case $1 in
@@ -21,4 +24,9 @@ while (( $# )); do
     shift
 done
 
-docker build --build-arg BASE_CONTAINER=$BASE_CONTAINER -t $TYPE .
+docker build \
+    --build-arg BASE_CONTAINER=$BASE_CONTAINER \
+    --build-arg PYTHON2_IMG=$PYTHON2_IMG \
+    --build-arg PYTHON3_IMG=$PYTHON3_IMG \
+    -t $TYPE \
+    .
