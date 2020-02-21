@@ -4,8 +4,8 @@ set -euxo pipefail
 NO_CACHE=""
 export DOCKER_BUILDKIT=0
 BASE_CONTAINER="jupyter/scipy-notebook:c7fb6660d096"
-PYTHON2_IMG="ypetit/test:python-2.7"
-PYTHON3_IMG="ypetit/test:python-3.6"
+PYTHON2_IMG="saagie/python:2.7.202002.89.12"
+PYTHON3_IMG="saagie/python:3.6.202002.89.12"
 
 
 while (( $# )); do
