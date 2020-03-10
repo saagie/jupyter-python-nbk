@@ -8,6 +8,7 @@ FROM $BASE_CONTAINER
 
 MAINTAINER Saagie
 
+ENV PATH=$PATH:/home/$NB_USER/.local/bin
 
 USER root
 ########################## LIBS PART BEGIN ##########################
@@ -24,43 +25,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 ########################## LIBS PART END ##########################
 
-
+USER $NB_USER
 ########################## PYTHON2 / CONDA PART BEGIN ##########################
-# Install pip2
-RUN cd /tmp && wget https://bootstrap.pypa.io/get-pip.py && \
-    python2 get-pip.py
+# Install pip2 & upgrade pip
+RUN cd /tmp && wget https://bootstrap.pypa.io/get-pip.py \
+    && python2 get-pip.py \
+    && pip install --upgrade pip
 
-# upgrade pip
-RUN pip install --upgrade pip
-
-USER $NB_USER
-# Add python 2 kernel
-RUN conda create -n ipykernel_py2 python=2 ipykernel --yes
-RUN /bin/bash -c "source activate ipykernel_py2"
-RUN python -m ipykernel install --user
-
-USER root
 # Install python2 libraries (not installed by python2 image)
-RUN pip2 --no-cache-dir install \
-    'dask==0.16.0' \
-    'ipywidgets==7.0.5' \
-    'vega==0.4.4' \
-    'vincent==0.4.4' \
-    'fastparquet==0.1.5' \
-    'protobuf==3.6.1' \
-  && rm -rf /root/.cachex
+# Amongst them ipywidget which allows python2 kernel for jupyter
+COPY requirements_pip2.txt requirements_pip2.txt
+RUN pip2 --no-cache-dir install -r requirements_pip2.txt
 
-# Ask to update Conda but seems useless :
-# Update conda to the latest version
-# RUN conda update -n base conda
-
-USER $NB_USER
 # Add libraries and upgrade libraries installed in base image for python 3
-RUN conda install --quiet --yes \
-    'hdf5=1.10.1' \
-    'python-hdfs=2.0.16' \
-    'pillow=4.3.0' \
-    'protobuf==3.6.1' \
+COPY requirements_conda.txt requirements_conda.txt
+RUN conda install --quiet --yes --file requirements_conda.txt \
     && conda remove --quiet --yes --force qt pyqt \
     && conda clean --all -y \
     && npm cache clean --force \
@@ -71,25 +50,22 @@ USER root
 RUN fix-permissions $CONDA_DIR
 ########################## PTYHON2 / CONDA PART END ##########################
 
-
-
+USER $NB_USER
 ########################## REQUIREMENTS PART BEGIN ##########################
 # Import python2 libs from ...
 COPY --from=PYTHON2 /requirements.txt ./requirements_python2.txt
-RUN pip2 install -r requirements_python2.txt
+RUN pip2 --no-cache-dir install -r requirements_python2.txt
 
 # Import python3 libs from ...
 COPY --from=PYTHON3 /requirements.txt ./requirements_python3.txt
-RUN pip install -r requirements_python3.txt
+RUN pip --no-cache-dir install -r requirements_python3.txt
 ########################## REQUIREMENTS PART END ##########################
 
-
-# TODO check if necessary
 ########################## Fix ipykernel ##########################
-USER root
+# Without these lines jupyter uses python3 instead even for python2 sheets
 RUN python2 -m ipykernel install --user
 ########################## Fix ipykernel END ##########################
-
+# see https://ipython.readthedocs.io/en/5.2.1/install/kernel_install.html
 
 ########################## NOTEBOOKS DIR ##########################
 USER root
@@ -100,7 +76,6 @@ RUN chown -R $NB_USER:users /usr/local/lib/python2.7/
 # Define default workdir
 WORKDIR /notebooks-dir
 ########################## NOTEBOOKS DIR  END ##########################
-
 
 # Should run as $NB_USER
 USER $NB_USER

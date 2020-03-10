@@ -24,7 +24,7 @@ while (( $# )); do
     shift
 done
 
-docker build \
+docker build $NO_CACHE \
     --build-arg BASE_CONTAINER=$BASE_CONTAINER \
     --build-arg PYTHON2_IMG=$PYTHON2_IMG \
     --build-arg PYTHON3_IMG=$PYTHON3_IMG \

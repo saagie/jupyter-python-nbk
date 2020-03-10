@@ -21,4 +21,4 @@ while (( $# )); do
     shift
 done
 
-docker build --build-arg BASE_CONTAINER=$BASE_CONTAINER -t $TYPE .
+docker build $NO_CACHE --build-arg BASE_CONTAINER=$BASE_CONTAINER -t $TYPE .
