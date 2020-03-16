@@ -1,5 +1,5 @@
 ARG PYTHON3_IMG="saagie/python:3.6.201912.65"
-ARG BASE_CONTAINER="jupyter/scipy-notebook:latest"
+ARG BASE_CONTAINER="jupyter/scipy-notebook:c7fb6660d096"
 
 FROM $PYTHON3_IMG AS PYTHON3
 FROM $BASE_CONTAINER
