@@ -39,12 +39,6 @@ RUN fix-permissions $CONDA_DIR
 ########################## PTYHON2 / CONDA PART END ##########################
 
 USER $NB_USER
-########################## REQUIREMENTS PART BEGIN ##########################
-
-# Import python3 libs from ...
-COPY --from=PYTHON3 /requirements.txt ./requirements_python3.txt
-RUN pip --no-cache-dir install -r requirements_python3.txt
-########################## REQUIREMENTS PART END ##########################
 
 ########################## NOTEBOOKS DIR ##########################
 USER root
