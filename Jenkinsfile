@@ -6,10 +6,11 @@ pipeline {
     }
 
     stages {
-        stage('Build Rstudio image') {
+        stage('Build Jupyter images') {
             steps {
                 script {
-                    sh "docker build -t saagie/jupyter-python-nbk:v2 ."
+                    sh "docker build -t saagie/jupyter-python-nbk:v2_wip ."
+                    sh "docker build -t saagie/jupyter-python-nbk:v2-cuda_wip --build-arg BASE_CONTAINER=saagie/jupyter-python-nbk:v2 -f cuda/Dockerfile ./cuda"
                 }
             }
         }
@@ -23,7 +24,8 @@ pipeline {
                 passwordVariable: 'PASSWORD')]) {
 
                         sh "docker login -u $USERNAME -p $PASSWORD"
-                        sh "docker push saagie/jupyter-python-nbk:v2"
+                        sh "docker push saagie/jupyter-python-nbk:v2_wip"
+                        sh "docker push saagie/jupyter-python-nbk:v2-cuda_wip"
                     }
                 }
             }

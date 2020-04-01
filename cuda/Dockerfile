@@ -54,7 +54,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt requirements_cuda.txt
-RUN pip install -r requirements_cuda.txt \
-      && rm -rf /root/.cachex
+RUN . activate py36 \
+    && python -m pip install --no-cache-dir -r requirements_cuda.txt \
+    && conda deactivate \
+    && rm -rf ~/.cache/pip \
+    && rm -rf /root/.cachex
+
 
 USER $NB_USER
