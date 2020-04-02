@@ -1,3 +1,5 @@
+buildVersion = new Date().format("yyyyMMddHHmmss")
+
 pipeline {
     agent { node { label 'docker_image' } }
 
@@ -9,8 +11,7 @@ pipeline {
         stage('Build Jupyter images') {
             steps {
                 script {
-                    sh "docker build -t saagie/jupyter-python-nbk:v2_wip ."
-                    sh "docker build -t saagie/jupyter-python-nbk:v2-cuda_wip --build-arg BASE_CONTAINER=saagie/jupyter-python-nbk:v2 -f cuda/Dockerfile ./cuda"
+                    sh "docker build -t saagie/jupyter-python-nbk:v2_$buildVersion ."
                 }
             }
         }
@@ -24,8 +25,7 @@ pipeline {
                 passwordVariable: 'PASSWORD')]) {
 
                         sh "docker login -u $USERNAME -p $PASSWORD"
-                        sh "docker push saagie/jupyter-python-nbk:v2_wip"
-                        sh "docker push saagie/jupyter-python-nbk:v2-cuda_wip"
+                        sh "docker push saagie/jupyter-python-nbk:v2_$buildVersion"
                     }
                 }
             }
