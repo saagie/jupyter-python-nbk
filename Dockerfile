@@ -143,10 +143,12 @@ RUN mkdir /notebooks-dir && chown 1000:100 /notebooks-dir
 WORKDIR /notebooks-dir
 ########################## NOTEBOOKS DIR  END ##########################
 
+#Add entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Should run as $NB_USER
 USER $NB_USER
-#Add entrypoint.sh
-COPY entrypoint.sh /entrypoint.sh
+
 # Default: run without authentication
 CMD ["/entrypoint.sh"]
