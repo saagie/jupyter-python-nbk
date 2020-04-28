@@ -1,7 +1,7 @@
-ARG PYTHON2_IMG="saagie/python:2.7.202003.76"
-ARG PYTHON3_IMG="saagie/python:3.6.202003.76"
+ARG PYTHON2_IMG="saagie/python:2.7.202004.82"
+ARG PYTHON3_IMG="saagie/python:3.6.202004.82"
 
-# FIXME should use a minimal image and add libs after
+# FIXME should use a minimal image and add libs after + update to latest available
 ARG BASE_CONTAINER="jupyter/scipy-notebook:c7fb6660d096"
 
 FROM $PYTHON2_IMG AS PYTHON2
