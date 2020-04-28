@@ -1,3 +1,5 @@
+buildVersion = new Date().format("yyyyMMddHHmmss")
+
 pipeline {
     agent { node { label 'docker_image' } }
 
@@ -6,10 +8,10 @@ pipeline {
     }
 
     stages {
-        stage('Build Rstudio image') {
+        stage('Build Jupyter images') {
             steps {
                 script {
-                    sh "docker build -t saagie/jupyter-python-nbk:v2 ."
+                    sh "docker build -t saagie/jupyter-python-nbk:v2_$buildVersion ."
                 }
             }
         }
@@ -23,7 +25,7 @@ pipeline {
                 passwordVariable: 'PASSWORD')]) {
 
                         sh "docker login -u $USERNAME -p $PASSWORD"
-                        sh "docker push saagie/jupyter-python-nbk:v2"
+                        sh "docker push saagie/jupyter-python-nbk:v2_$buildVersion"
                     }
                 }
             }
