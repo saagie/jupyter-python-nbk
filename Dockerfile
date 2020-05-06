@@ -1,5 +1,5 @@
-ARG PYTHON2_IMG="saagie/python:2.7.202004.82"
-ARG PYTHON3_IMG="saagie/python:3.6.202004.82"
+ARG PYTHON2_IMG="saagie/python:2.7.202004.83"
+ARG PYTHON3_IMG="saagie/python:3.6.202004.83"
 
 # FIXME should use a minimal image and add libs after + update to latest available
 ARG BASE_CONTAINER="jupyter/scipy-notebook:c7fb6660d096"
