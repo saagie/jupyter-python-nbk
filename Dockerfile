@@ -44,18 +44,32 @@ RUN jupyter kernelspec remove -f python3
 #RUN conda update -n root conda \
 #    && conda clean -afy
 
+SHELL ["/bin/bash", "-c"]
+
 # Install python2.7 and 3.6 environments
 RUN conda create -n py27 python=2.7 \
-    && bash -c "source activate py27 && conda install notebook ipykernel -y && ipython kernel install --user --name py27 --display-name 'Python 2.7'" \
-    && conda clean -a
+    && . activate py27 \
+    # Force installation of IPython to avoid broken install of ipykernel
+    && pip install ipython \
+    && conda install notebook ipykernel -y \
+    && ipython kernel install --user --name py27 --display-name 'Python 2.7' \
+    && source deactivate \
+    && conda clean -a \
+    && rm -rf ~/.cache/pip
+
 # seems there's sometimesa problem with pyzmq so need to reinstall it...
 RUN conda create -n py36 python=3.6 \
-    && bash -c "source activate py36 && pip uninstall pyzmq -y && pip install pyzmq && conda install notebook ipykernel -y && ipython kernel install --user --name py36 --display-name 'Python 3.6'" \
+    && . activate py36 \
+    # Force reinstallation of pyzmq to avoid broken install of ipykernel
+    && pip uninstall pyzmq -y \
+    && pip install pyzmq \
+    && conda install notebook ipykernel -y \
+    && ipython kernel install --user --name py36 --display-name 'Python 3.6' \
+    && source deactivate \
     && conda clean -a \
     && rm -rf ~/.cache/pip
 
 # TODO check if all necessary seems there are duplicate from jupyter/scipy image
-SHELL ["/bin/bash", "-c"]
 # Add libs for python 2.7 env
 #     inherited from saagie/python:2.7 image
 #     installed via pip only
@@ -68,7 +82,7 @@ RUN conda install -n py27 --quiet --yes --file requirements_conda2.txt \
     && python -m pip install --no-cache-dir -r requirements_pip2.txt \
     && python -m pip install --no-cache-dir -r requirements_python2.txt \
     && source deactivate \
-    && conda clean -a\
+    && conda clean -a \
     && rm -rf ~/.cache/pip
 
 # Add libs for python 3.6 env
@@ -82,7 +96,7 @@ RUN conda install -n py36 --quiet --yes --file requirements_conda3.txt \
     # Some installed library (scikit-learn) could not be removed so use --ignore-installed \
     && sed -n '/scikit-learn/p' requirements_python3.txt >> requirements_python3_ignore-installed.txt \
     && sed -i '/scikit-learn/d' requirements_python3.txt \
-    &&. activate py36 \
+    && . activate py36 \
     && python -m pip install --no-cache-dir --ignore-installed -r requirements_python3_ignore-installed.txt \
     && python -m pip install --no-cache-dir -r requirements_pip3.txt \
     && python -m pip install --no-cache-dir -r requirements_python3.txt \
