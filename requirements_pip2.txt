@@ -1,5 +1,3 @@
-# Allows Python2 kernel inside jupyter
-# ipywidgets==7.0.5
 # Libs not present in saagie/python:2.7 images but previously in saagie/jupyter-python-nbk image.
 dask==0.16.0
 llvmlite==0.31.0
