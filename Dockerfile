@@ -2,7 +2,7 @@ ARG PYTHON2_IMG="saagie/python:2.7.202005.84"
 ARG PYTHON3_IMG="saagie/python:3.6.202005.84"
 
 # FIXME should use a minimal image and add libs after + update to latest available
-ARG BASE_CONTAINER="jupyter/scipy-notebook:c7fb6660d096"
+ARG BASE_CONTAINER="jupyter/scipy-notebook:76402a27fd13"
 
 FROM $PYTHON2_IMG AS PYTHON2
 FROM $PYTHON3_IMG AS PYTHON3
@@ -25,8 +25,8 @@ USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
       libxml2-dev libxslt1-dev antiword unrtf poppler-utils pstotext tesseract-ocr \
       flac ffmpeg lame libmad0 libsox-fmt-mp3 sox libjpeg-dev swig redis-server libpulse-dev \
-      libpng3 libfreetype6-dev libatlas-base-dev gfortran \
-      libgdal1-dev sasl2-bin libsasl2-2 libsasl2-dev \
+      libpng16-16 libfreetype6-dev libatlas-base-dev gfortran \
+      libgdal-dev sasl2-bin libsasl2-2 libsasl2-dev \
       libsasl2-modules unixodbc-dev python3-tk \
       qt5-default \
       libqt5webkit5-dev \
@@ -121,15 +121,11 @@ ENV CUDNN_VERSION 7.6.0.64
 LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      ca-certificates apt-transport-https gnupg-curl && \
+      ca-certificates apt-transport-https gnupg2 curl && \
     rm -rf /var/lib/apt/lists/* && \
-    NVIDIA_GPGKEY_SUM=d1be581509378368edeec8c1eb2958702feedf3bc3d17011adbf24efacce4ab5 && \
-    NVIDIA_GPGKEY_FPR=ae09fe4bbd223a84b2ccfce3f60f4b3d7fa2af80 && \
-    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub && \
-    apt-key adv --export --no-emit-version -a $NVIDIA_GPGKEY_FPR | tail -n +5 > cudasign.pub && \
-    echo "$NVIDIA_GPGKEY_SUM  cudasign.pub" | sha256sum -c --strict - && rm cudasign.pub && \
-    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64 /" > /etc/apt/sources.list.d/cuda.list && \
-    echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list && \
+    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub | apt-key add - && \
+    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list && \
+    echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list && \
     # For libraries in the cuda-compat-* package: https://docs.nvidia.com/cuda/eula/index.html#attachment-a
     apt-get update && apt-get install -y --no-install-recommends \
         cuda-cudart-$CUDA_PKG_VERSION \
