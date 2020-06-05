@@ -40,9 +40,6 @@ USER $NB_USER
 # Uninstall python3 kernel
 RUN jupyter kernelspec remove -f python3
 
-# Update conda to latest version
-#RUN conda update -n root conda \
-#    && conda clean -afy
 
 SHELL ["/bin/bash", "-c"]
 
