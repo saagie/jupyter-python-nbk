@@ -1,4 +1,4 @@
-ARG BASE_CONTAINER="ypetit/test:jupyter-minimal_20200403.54"
+ARG BASE_CONTAINER="ypetit/test:jupyter-python-notebook_minimal_20200625_02"
 
 FROM $BASE_CONTAINER
 
@@ -24,9 +24,9 @@ RUN apt-get update -qq && apt-get install -yqq --no-install-recommends -y \
 
 # Install Kerberos & ACL for Saagie
 COPY resources/cloudera.list /etc/apt/sources.list.d/cloudera.list
-RUN apt-get update -qq && apt-get install -yqq --no-install-recommends \
+RUN apt-key adv  --recv-keys --keyserver keyserver.ubuntu.com 327574EE02A818DD \
+    && apt-get update -qq && apt-get install -yqq --no-install-recommends \
       krb5-user acl \
-# apt-key adv  --recv-keys --keyserver keyserver.ubuntu.com 327574EE02A818DD
       freeipa-client sentry-hdfs-plugin \
     && rm -rf /var/lib/apt/lists/*;
 
@@ -53,9 +53,8 @@ RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SP
 # TODO copy alsewhere (here it's in /notebook-dirs)
 USER $NB_UID
 COPY resources/requirements_conda.txt /home/$NB-USER/requirements_conda.txt
-RUN conda install -n py27 --quiet --yes --file /home/$NB-USER/requirements_conda.txt && \
-    conda install -n py36 --quiet --yes --file /home/$NB-USER/requirements_conda.txt && \
-    conda clean -afy
+RUN conda install -n py36 --quiet --yes --file /home/$NB-USER/requirements_conda.txt && \
+    conda clean -ay
 
 USER root
 COPY resources/spark-defaults.conf $SPARK_HOME/conf/spark-defaults.conf.orig
