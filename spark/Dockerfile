@@ -57,12 +57,10 @@ RUN conda install -n py36 --quiet --yes --file /home/$NB-USER/requirements_conda
     conda clean -ay
 
 USER root
-COPY resources/spark-defaults.conf $SPARK_HOME/conf/spark-defaults.conf.orig
 COPY resources/spark-env.sh $SPARK_HOME/conf/spark-env.sh
 COPY resources/test.ipynb /home/$NB_USER/work/test.ipynb
 COPY resources/test2.ipynb /home/$NB_USER/work/test2.ipynb
-RUN chown $NB_USER:$NB_UID $SPARK_HOME/conf/spark-defaults.conf.orig \
-    && chown $NB_USER:$NB_UID $SPARK_HOME/conf/spark-env.sh \
+RUN chown $NB_USER:$NB_UID $SPARK_HOME/conf/spark-env.sh \
     && chown $NB_USER:$NB_UID /home/$NB_USER/work/test.ipynb \
     && chown $NB_USER:$NB_UID /home/$NB_USER/work/test2.ipynb \
     && chmod +x $SPARK_HOME/conf/spark-env.sh
