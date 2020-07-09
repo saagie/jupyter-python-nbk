@@ -1,6 +1,4 @@
-ARG BASE_CONTAINER="ypetit/test:jupyter-python-notebook_minimal_20200625_02"
-
-FROM $BASE_CONTAINER
+FROM saagie/jupyter-python-nbk:v2-base
 
 MAINTAINER Saagie
 
