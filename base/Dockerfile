@@ -1,4 +1,4 @@
-ARG PYTHON3_IMG="saagie/python:3.6.202005.84"
+ARG PYTHON3_IMG="saagie/python:3.6-1.41.0_python"
 
 ARG BASE_CONTAINER="saagie/jupyter-python-nbk:v2-minimal"
 
@@ -38,7 +38,7 @@ SHELL ["/bin/bash", "-c"]
 #     installed via pip only
 #     installed via conda
 COPY requirements_conda3.txt requirements_conda3.txt
-COPY --from=PYTHON3 /requirements.txt ./requirements_python3.txt
+COPY --from=PYTHON3 /tmp/requirements.txt ./requirements_python3.txt
 COPY requirements_pip3.txt requirements_pip3.txt
 RUN conda install -n py36 --quiet --yes --file requirements_conda3.txt \
     # Some installed library (scikit-learn) could not be removed so use --ignore-installed \
